@@ -1,2 +1,2 @@
-# torch_for_R_practice
+# Torch for R practice
 Place to practice using the R machine learning framework Torch.
