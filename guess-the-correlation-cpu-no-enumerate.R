@@ -183,9 +183,17 @@ for (epoch in 1:num_epochs) {
   
   train_losses <- c()
   
+  ## The original CPU tutorial executed train_batch(b) 
+  ## and didn't use an iterator. I found out the train_batch(b) generates
+  ## an error when done using a GPU. Using an iterator works. There's probably
+  ## an issue with pulling elements out of enumerate when using a GPU. 
+  ## I used the iterator approach for training, validation, and testing.
+  
+  train_dl_iter <- dataloader_make_iter(train_dl)
+  
   for (b in enumerate(train_dl)) {
     
-    loss <- train_batch(b)
+    loss <- train_batch(dataloader_next(train_dl_iter))
     train_losses <- c(train_losses, loss)
     
   }
@@ -195,9 +203,11 @@ for (epoch in 1:num_epochs) {
   
   valid_losses <- c()
   
+  valid_dl_iter <- dataloader_make_iter(valid_dl)
+  
   for (b in enumerate(valid_dl)) {
     
-    loss <- valid_batch(b)
+    loss <- valid_batch(dataloader_next(valid_dl_iter))
     valid_losses <- c(valid_losses, loss)
     
   }
@@ -230,8 +240,10 @@ test_losses <- c()
 preds <- c()
 targets <- c()
 
+test_dl_iter <- dataloader_make_iter(test_dl)
+
 for (b in enumerate(test_dl)) {
-  test_batch(b)
+  test_batch(dataloader_next(test_dl_iter))
 }
 
 mean(test_losses)
